@@ -22,11 +22,60 @@ provider:
   #
   #environment:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
+  environment:
+    tableName: notes
+  iamRoleStatements: 
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:DescribeTable
+      Resource: "arn:aws:dynamodb:ap-southeast-1:*:*"
 
 functions:
-  hello:
-    handler: handler.hello
+  create:
+    handler: create.main
     events:
       - http:
-          path: hello
+          path: notes
+          method: post
+          cors: true
+          authorizer: aws_iam
+  get: 
+    handler: get.main
+    events: 
+      - http:
+          path: notes/{id}
           method: get
+          cors: true
+          authorizer: aws_iam
+
+  list: 
+    handler: list.main
+    events: 
+      - http:
+          path: notes
+          method: get
+          cors: true
+          authorizer: aws_iam
+
+  update: 
+    handler: update.main
+    events: 
+      - http:
+          path: notes/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+  delete: 
+    handler: delete.main
+    events: 
+      - http:
+          path: notes/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam

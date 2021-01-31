@@ -10,6 +10,11 @@ plugins:
   - serverless-offline
   - serverless-dotenv-plugin # Load .env as environment variables
 
+resources:
+  # Api gateway errors
+  - ${file(resources/api-gateway-errors.yml)}
+
+
 provider:
   name: aws
   runtime: nodejs10.x
@@ -24,6 +29,7 @@ provider:
   #  SAMPLE_ENV_VAR: ${env:SAMPLE_ENV_VAR}
   environment:
     tableName: notes
+    stripeSecretKey: ${env:STRIPE_SECRET_KEY}
   iamRoleStatements: 
     - Effect: Allow
       Action:
@@ -79,3 +85,12 @@ functions:
           method: delete
           cors: true
           authorizer: aws_iam
+  billing: 
+    handler: billing.main
+    events:
+      - http:
+          path: billing
+          method: post
+          cors: true
+          authorizer: aws_iam
+    

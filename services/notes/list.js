@@ -12,4 +12,3 @@ export const main = handler(async (event, context) => {
   const result = await dynamoDb.query(params);
   return result.Items;
 });
-k
